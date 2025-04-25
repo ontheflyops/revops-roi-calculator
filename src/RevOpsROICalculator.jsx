@@ -10,8 +10,16 @@ const Button = ({ children, ...props }) => <button {...props} className="bg-blue
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border rounded shadow">
-        <p className="font-semibold">{label}</p>
+      <div
+        className="bg-white text-black p-3 rounded-md shadow-md border border-gray-300"
+        style={{
+          transform: 'translateY(-20px)',
+          pointerEvents: 'none',
+          maxWidth: '220px',
+          whiteSpace: 'normal',
+        }}
+      >
+        <p className="font-semibold text-sm">{label}</p>
         {payload.map((entry, index) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {Number(entry.value).toFixed(2)}
@@ -22,6 +30,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   }
   return null;
 };
+
 
 export default function RevOpsROICalculator() {
   const [arr, setArr] = useState(1000000);
