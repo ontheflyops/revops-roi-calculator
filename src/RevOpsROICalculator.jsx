@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
-// Simple styled components
+// Fallback styled components (until actual UI library is added)
 const Card = ({ children, className }) => <div className={`bg-white p-6 rounded shadow ${className}`}>{children}</div>;
 const CardContent = ({ children, className }) => <div className={className}>{children}</div>;
 const Input = (props) => <input {...props} className="border p-2 w-full rounded" />;
-const Button = ({ children, ...props }) => <button {...props} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">{children}</button>;
+const Button = ({ children, ...props }) => <button {...props} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">{children}</button>;
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -135,10 +135,14 @@ export default function RevOpsROICalculator() {
             <Input type="number" value={cac} onChange={(e) => setCac(Number(e.target.value))} />
           </div>
 
-          <Button onClick={calculateROI}>
-            Calculate ROI
-          </Button>
-
+          <div className="flex justify-center">
+              <Button
+                onClick={calculateROI}
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full shadow-md transition-all duration-300"
+              >
+                Calculate ROI
+              </Button>
+          </div>
           {roi && (
             <div className="mt-6 text-center">
               <p className="text-xl font-semibold">Estimated ROI: {roi}%</p>
@@ -148,7 +152,7 @@ export default function RevOpsROICalculator() {
         </CardContent>
       </Card>
 
-      {charts.map((chart, index) => (
+      {roi !== null && charts.map((chart, index) => (
         <div key={index} className="mt-8">
           <h2 className="text-lg font-semibold mb-2 text-center">{chart.title}</h2>
           <ResponsiveContainer width="100%" height={250}>
