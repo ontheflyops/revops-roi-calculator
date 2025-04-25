@@ -1,17 +1,23 @@
 import { useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
-// Fallback styled components (until actual UI library is added)
-const Card = ({ children, className }) => <div className={`bg-white p-6 rounded shadow ${className}`}>{children}</div>;
+const Card = ({ children, className }) => <div className={`bg-white p-6 rounded-xl shadow-lg ${className}`}>{children}</div>;
 const CardContent = ({ children, className }) => <div className={className}>{children}</div>;
-const Input = (props) => <input {...props} className="border p-2 w-full rounded" />;
-const Button = ({ children, ...props }) => <button {...props} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">{children}</button>;
+const Input = (props) => <input {...props} className="border p-2 w-full rounded-md shadow-sm" />;
+const Button = ({ children, ...props }) => (
+  <button
+    {...props}
+    className="bg-blue-600 hover:bg-blue-700 hover:scale-105 transition-all duration-200 text-white py-2 px-6 rounded-full font-semibold shadow-md"
+  >
+    {children}
+  </button>
+);
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div
-        className="bg-white text-black p-3 rounded-md shadow-md border border-gray-300"
+        className="bg-white text-black p-4 rounded-lg shadow-lg border border-gray-300"
         style={{
           transform: 'translateY(-20px)',
           pointerEvents: 'none',
@@ -19,7 +25,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           whiteSpace: 'normal',
         }}
       >
-        <p className="font-semibold text-sm">{label}</p>
+        <p className="font-bold text-sm mb-1">{label}</p>
         {payload.map((entry, index) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {Number(entry.value).toFixed(2)}
@@ -31,8 +37,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-
-export default function RevOpsROICalculator() {
+export default function RevOpsROICalculator({ showTitles = true }) {
   const [arr, setArr] = useState(1000000);
   const [leads, setLeads] = useState(500);
   const [conversionRate, setConversionRate] = useState(10);
@@ -102,13 +107,13 @@ export default function RevOpsROICalculator() {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-4">
-      <Card className="p-6 space-y-6">
+    <div className="max-w-4xl mx-auto mt-10 p-4">
+      <Card className="space-y-6">
         <CardContent className="space-y-4">
           <div>
-            <label>Select Industry:</label>
+            <label className="font-medium">Select Industry:</label>
             <select
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 mt-1"
               value={industry}
               onChange={(e) => setIndustry(e.target.value)}
             >
@@ -118,55 +123,33 @@ export default function RevOpsROICalculator() {
               <option value="HealthcareTech">HealthcareTech</option>
             </select>
           </div>
-          <div>
-            <label>Current Annual Recurring Revenue (ARR) ($):</label>
-            <Input type="number" value={arr} onChange={(e) => setArr(Number(e.target.value))} />
-          </div>
-          <div>
-            <label>Average Number of New Leads per Month:</label>
-            <Input type="number" value={leads} onChange={(e) => setLeads(Number(e.target.value))} />
-          </div>
-          <div>
-            <label>Lead-to-Customer Conversion Rate (%):</label>
-            <Input type="number" value={conversionRate} onChange={(e) => setConversionRate(Number(e.target.value))} />
-          </div>
-          <div>
-            <label>Sales Win Rate (%):</label>
-            <Input type="number" value={winRate} onChange={(e) => setWinRate(Number(e.target.value))} />
-          </div>
-          <div>
-            <label>Average Sale Price ($):</label>
-            <Input type="number" value={asp} onChange={(e) => setAsp(Number(e.target.value))} />
-          </div>
-          <div>
-            <label>Customer Acquisition Cost (CAC) ($):</label>
-            <Input type="number" value={cac} onChange={(e) => setCac(Number(e.target.value))} />
+          <div><label>Current ARR ($):</label><Input type="number" value={arr} onChange={(e) => setArr(Number(e.target.value))} /></div>
+          <div><label>Avg Monthly Leads:</label><Input type="number" value={leads} onChange={(e) => setLeads(Number(e.target.value))} /></div>
+          <div><label>Conversion Rate (%):</label><Input type="number" value={conversionRate} onChange={(e) => setConversionRate(Number(e.target.value))} /></div>
+          <div><label>Win Rate (%):</label><Input type="number" value={winRate} onChange={(e) => setWinRate(Number(e.target.value))} /></div>
+          <div><label>Avg Sale Price ($):</label><Input type="number" value={asp} onChange={(e) => setAsp(Number(e.target.value))} /></div>
+          <div><label>CAC ($):</label><Input type="number" value={cac} onChange={(e) => setCac(Number(e.target.value))} /></div>
+
+          <div className="flex justify-center pt-4">
+            <Button onClick={calculateROI}>Calculate ROI</Button>
           </div>
 
-          <div className="flex justify-center">
-              <Button
-                onClick={calculateROI}
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full shadow-md transition-all duration-300"
-              >
-                Calculate ROI
-              </Button>
-          </div>
           {roi && (
             <div className="mt-6 text-center">
               <p className="text-xl font-semibold">Estimated ROI: {roi}%</p>
-              <p className="text-md mt-2">This projection is based on measurable gains in conversion, win rate, average sale price, and marketing efficiency from fractional RevOps at a $90,000/year investment.</p>
+              <p className="text-sm mt-2 text-gray-600">Based on projected gains in conversion, win rate, ASP, and CAC with a $90k annual RevOps investment.</p>
             </div>
           )}
         </CardContent>
       </Card>
 
       {roi !== null && charts.map((chart, index) => (
-        <div key={index} className="mt-8">
-          <h2 className="text-lg font-semibold mb-2 text-center">{chart.title}</h2>
+        <div key={index} className="mt-10">
+          {showTitles && <h2 className="text-md font-semibold mb-2 text-center">{chart.title}</h2>}
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={chart.data} layout="vertical">
               <XAxis type="number" />
-              <YAxis dataKey="label" type="category" width={180} />
+              <YAxis dataKey="label" type="category" width={200} />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar dataKey="Benchmark" fill="#999999" name="Industry Benchmark" />
