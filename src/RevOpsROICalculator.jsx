@@ -103,7 +103,6 @@ export default function RevOpsROICalculator() {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">RevOps ROI Calculator</h1>
       <Card className="p-6 space-y-6">
         <CardContent className="space-y-4">
           <div>
